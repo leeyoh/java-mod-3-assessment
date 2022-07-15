@@ -1,5 +1,8 @@
 package Scanner;
 import Console.LoggerSingleton;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -18,17 +21,30 @@ public class Prompt {
      * @param questionIndex
      * @return
      */
-    public int askQuetions(int[] questionIndex){
+    public int chooseMulti(int[] questionIndex){
         for(int i : questionIndex){
             log.select(i,questions.get(i));
         }
         log.prompt(":");
-        int userChoice = sc.getInt(999);
-
+        int userChoice = sc.getInt(0,999);
         if( IntStream.of(questionIndex).anyMatch(x -> x == userChoice)){
             return userChoice;
         }
-        askQuetions(questionIndex);
-        return 0;
+        return chooseMulti(questionIndex);
+    }
+
+    public List<String> askSequence(int[] questionIndex){
+        List<String> answers = new ArrayList<String>();
+        for(int i : questionIndex){
+            log.prompt(questions.get(i));
+            log.prompt(":");
+            if(i > 1000){
+                answers.add(sc.getString());
+            } else {
+                answers.add(String.valueOf(sc.getInt(0,999)));
+            }
+        }
+        System.out.println(answers);
+        return answers;
     }
 }

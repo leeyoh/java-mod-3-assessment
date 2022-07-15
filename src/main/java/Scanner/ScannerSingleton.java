@@ -1,11 +1,14 @@
 package Scanner;
 
+import Console.LoggerSingleton;
+
 import java.util.Locale;
 import java.util.Scanner;
 
 public class ScannerSingleton {
     private static ScannerSingleton scan = null;
     private Scanner scanner;
+    private LoggerSingleton log;
     private ScannerSingleton(){
         scanner = new Scanner(System.in);
     }
@@ -18,21 +21,38 @@ public class ScannerSingleton {
     public void close(){
         scanner.close();
     }
-    public String getNextLine(){
-        return scanner.nextLine();
+
+    /**
+     * @return
+     */
+    public String getString(){
+        String text = scanner.nextLine();
+        return text;
     }
-    public int getInt(int limit){
-        int choice = 0;
+
+    /**
+     * Will ask user until a valid input is given
+     * @param min
+     * @param limit
+     * @return
+     */
+    public int getInt(int min, int limit){
+        int choice;
+        String input;
         try{
-            choice = scanner.nextInt();
-            if(choice < 1 || choice > limit){
-                return 0;
+            input = scanner.nextLine();
+            if (input.matches("[0-9]+")) {
+                choice =  Integer.parseInt(input);
+                if(choice > min && choice < limit){
+                    return choice;
+                }
             }
         } catch (Exception e){
-            System.out.println("Invalid Number");
+            System.out.println(e);
         }
-        scanner.nextLine();
-        return choice;
+        System.out.println("Invalid Input");
+        System.out.print(":");
+        return getInt(min, limit);
     }
     public String getMonth(){
         //https://stackoverflow.com/questions/2268969/convert-month-string-to-integer-in-java

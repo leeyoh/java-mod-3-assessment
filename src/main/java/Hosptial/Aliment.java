@@ -1,5 +1,7 @@
 package Hosptial;
-
+/**
+ * a (1) treatment is considered 10 health points.
+ */
 public enum Aliment {
     RASH (2, Specialty.DERMATOLOGY),
     COLIC (4, Specialty.PEDIATRICS),

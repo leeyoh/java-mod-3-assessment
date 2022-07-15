@@ -1,5 +1,6 @@
 import Console.LoggerSingleton;
 import FileManager.FileManagerSingleton;
+import Hosptial.Hospital;
 import Hosptial.PersonDirectory;
 import Scanner.Prompt;
 import Scanner.ScannerSingleton;
@@ -8,20 +9,18 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Terminal {
     private static PersonDirectory pd;
     private static ScannerSingleton sc;
     private static LoggerSingleton log;
     private static FileManagerSingleton fm;
-
     private static String fileName = "list";
     private static final String path = "data/";
     private static String filePath = path + fileName;
     private static Map<State, Prompt> prompts;
+    private static List<Hospital> hospitals;
     public static void main(String[] args) {
         initializeObjects();
         createFolder();
@@ -31,12 +30,23 @@ public class Terminal {
         //loadFile();
         //chooseOptions();
     }
+
+    /**
+     * Values greater than 1000, the user is prompted for String
+     * Values less than 1000, the user is prompted for INT
+     */
     public static void createQuestions(){
         prompts.put(State.MAIN_MENU,new Prompt(
                 new HashMap<>() {{
                     put(1, "Treat Patients");
                     put(2, "New Hospital");
                     put(3, "New Patients");
+                }}
+        ));
+        prompts.put(State.NEW_HOSPITAL,new Prompt(
+                new HashMap<>() {{
+                    put(1001, "Hospital Name?");
+                    put(2, "# of Doctors?");
                 }}
         ));
     }
@@ -56,19 +66,29 @@ public class Terminal {
         }
     }
     public static void initializeObjects(){
+        hospitals = new ArrayList<Hospital>();
         prompts = new HashMap<>();
         pd = new PersonDirectory();
         sc = ScannerSingleton.getInstance();
         log = LoggerSingleton.getInstance();
         fm = FileManagerSingleton.getInstance();
     }
-
+    private static void startHospital(){
+        List<String> answers = prompts.get(State.NEW_HOSPITAL).askSequence(new int[]{1001,2});
+        System.out.println(answers.get(0));
+        System.out.println(answers.get(1));
+        hospitals.add(
+                new Hospital(answers.get(0),
+                        Integer.parseInt(answers.get(1))
+                )
+        );
+    }
     /**
      * Main Menu for Terminal
      * TODO change array of ints to ENUMS
      */
     public static void mainMenu(){
-        int choice = prompts.get(State.MAIN_MENU).askQuetions(new int[]{1,2, 3});
+        int choice = prompts.get(State.MAIN_MENU).chooseMulti(new int[]{1,2, 3});
         switch(choice){
             case 1: // Treatment
                 //Add Person to List
@@ -76,9 +96,7 @@ public class Terminal {
                 //chooseOptions();
                 break;
             case 2: // New Hospital
-                //List the current list of people, old + new
-                //printOption();
-                //chooseOptions();
+                startHospital();
                 break;
             case 3: // New Patient
                 //Append List to file then close program
@@ -86,15 +104,15 @@ public class Terminal {
                 //.saveToFileJson(filePath + ".json");
                 break;
             default:
-                mainMenu();
                 break;
         }
+        mainMenu();
     }
     public static void printOption(){
         log.log(" [1] CSV");
         log.log(" [2] JSON");
         log.prompt(": ");
-        switch(sc.getInt(2)){
+        switch(sc.getInt(0,2)){
             case 2:
                 pd.printPersonListAsJSON();
                 break;
@@ -110,28 +128,28 @@ public class Terminal {
      * Birth Month
      * Birth Day
      */
-    public static void addPerson(){
-        String firstName,lastName,year,month,day;
-
-        log.prompt("First Name: ");
-        firstName = sc.getNextLine();
-
-        log.prompt("Last Name: ");
-        lastName = sc.getNextLine();
-
-        log.log("BirthDay");
-        year = getYear();
-        month = getMonth();
-        day = getDay(year,month);
-
-        pd.addPerson(firstName,lastName,
-                Integer.valueOf(year),
-                Integer.valueOf(month),
-                Integer.valueOf(day));
-    }
+//    public static void addPerson(){
+//        String firstName,lastName,year,month,day;
+//
+////        log.prompt("First Name: ");
+////        firstName = sc.getNextLine();
+////
+////        log.prompt("Last Name: ");
+////        lastName = sc.getNextLine();
+//
+//        log.log("BirthDay");
+//        year = getYear();
+//        month = getMonth();
+//        day = getDay(year,month);
+//
+//        pd.addPerson(firstName,lastName,
+//                Integer.valueOf(year),
+//                Integer.valueOf(month),
+//                Integer.valueOf(day));
+//    }
     public static String getYear(){
         log.prompt("Year: ");
-        int year = sc.getInt(9999);
+        int year = sc.getInt(0,9999);
         if(year < 1){
             getYear();
         }
@@ -149,7 +167,7 @@ public class Terminal {
 
     public static String getDay(String year, String month){
         log.prompt("Day: ");
-        String day = String.valueOf(sc.getInt(31));
+        String day = String.valueOf(sc.getInt(0,31));
 
         if(!isValid(year + '-' + month + "-" + day)){
             log.error("Invalid Day");
