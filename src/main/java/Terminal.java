@@ -1,5 +1,6 @@
 import Console.LoggerSingleton;
 import FileManager.FileManagerSingleton;
+import Hosptial.PersonDirectory;
 import Scanner.Prompt;
 import Scanner.ScannerSingleton;
 
@@ -62,28 +63,32 @@ public class Terminal {
         fm = FileManagerSingleton.getInstance();
     }
 
+    /**
+     * Main Menu for Terminal
+     * TODO change array of ints to ENUMS
+     */
     public static void mainMenu(){
         int choice = prompts.get(State.MAIN_MENU).askQuetions(new int[]{1,2, 3});
-//        switch(choice){
-//            case 1:
-//                //Add Person to List
-//                //addPerson();
-//                //chooseOptions();
-//                break;
-//            case 2:
-//                //List the current list of people, old + new
-//                //printOption();
-//                //chooseOptions();
-//                break;
-//            case 3:
-//                //Append List to file then close program
-//                //pd.saveToFile(filePath + ".csv");
-//                //.saveToFileJson(filePath + ".json");
-//                break;
-//            default:
-//                //chooseOptions();
-//                break;
-//        }
+        switch(choice){
+            case 1: // Treatment
+                //Add Person to List
+                //addPerson();
+                //chooseOptions();
+                break;
+            case 2: // New Hospital
+                //List the current list of people, old + new
+                //printOption();
+                //chooseOptions();
+                break;
+            case 3: // New Patient
+                //Append List to file then close program
+                //pd.saveToFile(filePath + ".csv");
+                //.saveToFileJson(filePath + ".json");
+                break;
+            default:
+                mainMenu();
+                break;
+        }
     }
     public static void printOption(){
         log.log(" [1] CSV");

@@ -1,3 +1,5 @@
+package Hosptial;
+
 import FileManager.FileManagerSingleton;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
