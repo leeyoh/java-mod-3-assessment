@@ -1,3 +1,4 @@
+package FileManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.FileWriter;
@@ -13,6 +14,12 @@ public class FileManagerSingleton {
     private FileManagerSingleton(){
 
     }
+    //https://stackoverflow.com/questions/28947250/create-a-directory-if-it-does-not-exist-and-then-create-the-files-in-that-direct
+    public void createFolder(String folderName) throws IOException {
+        String PATH = "./";
+        Files.createDirectories(Paths.get(PATH + folderName));
+    }
+
     public static FileManagerSingleton getInstance(){
         if(fileManager == null){
             fileManager = new FileManagerSingleton();
@@ -69,7 +76,7 @@ public class FileManagerSingleton {
         }
     }
 
-    static void saveAsJSON (String fileName, List<Person> persons){
+    static void saveAsJSON (String fileName, List<String> persons){
         ObjectMapper mapper = new ObjectMapper();
         try{
             mapper.writeValue(new File(fileName),persons);
