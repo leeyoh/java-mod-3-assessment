@@ -14,19 +14,25 @@ public class FileManagerSingleton {
     private FileManagerSingleton(){
 
     }
+    /**
+     * Attempts to create a Folder in the root directory of the project.
+     * @param folderName
+     * @throws IOException
+     */
     //https://stackoverflow.com/questions/28947250/create-a-directory-if-it-does-not-exist-and-then-create-the-files-in-that-direct
     public void createFolder(String folderName) throws IOException {
         String PATH = "./";
         Files.createDirectories(Paths.get(PATH + folderName));
     }
-
+    /**
+     * Singleton Magic
+     */
     public static FileManagerSingleton getInstance(){
         if(fileManager == null){
             fileManager = new FileManagerSingleton();
         }
         return fileManager;
     }
-
     /**
      * Returns a list of Strings if the file exists.
      * If the file doesn't exist, throws a doesn't exist Exception. \
@@ -39,7 +45,6 @@ public class FileManagerSingleton {
         List<String> lines = Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);
         return lines;
     }
-
     /**
      * Lists all the Files in a Directory
      * @param dir

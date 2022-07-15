@@ -21,6 +21,9 @@ public class LoggerSingleton {
         public void error(String message){
             System.out.println(c.RED + message + c.RESET);
         }
+        public void select(int index, String message){
+            System.out.println(c.BLUE + " [ " + String.valueOf(index) + " ] " + message + c.RESET);
+        }
         public void log(String message) {
             currentLine++;
             System.out.println(c.BLUE + "::" + c.RESET  + message);

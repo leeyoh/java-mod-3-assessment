@@ -1,14 +1,14 @@
+package Scanner;
+
 import java.util.Locale;
 import java.util.Scanner;
 
 public class ScannerSingleton {
     private static ScannerSingleton scan = null;
     private Scanner scanner;
-
     private ScannerSingleton(){
         scanner = new Scanner(System.in);
     }
-
     public static ScannerSingleton getInstance(){
         if(scan == null){
             scan = new ScannerSingleton();

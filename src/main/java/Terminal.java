@@ -1,11 +1,15 @@
 import Console.LoggerSingleton;
 import FileManager.FileManagerSingleton;
+import Scanner.Prompt;
+import Scanner.ScannerSingleton;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Terminal {
     private static PersonDirectory pd;
@@ -16,14 +20,26 @@ public class Terminal {
     private static String fileName = "list";
     private static final String path = "data/";
     private static String filePath = path + fileName;
-
+    private static Map<State, Prompt> prompts;
     public static void main(String[] args) {
         initializeObjects();
+        createFolder();
+        createQuestions();
+        mainMenu();
+
         //loadFile();
         //chooseOptions();
-        createFolder();
-
     }
+    public static void createQuestions(){
+        prompts.put(State.MAIN_MENU,new Prompt(
+                new HashMap<>() {{
+                    put(1, "Treat Patients");
+                    put(2, "New Hospital");
+                    put(3, "New Patients");
+                }}
+        ));
+    }
+
     public static void createFolder(){
         try{
             fm.createFolder("data");
@@ -39,6 +55,7 @@ public class Terminal {
         }
     }
     public static void initializeObjects(){
+        prompts = new HashMap<>();
         pd = new PersonDirectory();
         sc = ScannerSingleton.getInstance();
         log = LoggerSingleton.getInstance();
@@ -46,30 +63,27 @@ public class Terminal {
     }
 
     public static void mainMenu(){
-        log.log(" [ 1 ] Add a person to the list");
-        log.log(" [ 2 ] Print a list of current persons");
-        log.log(" [ 3 ] Exit the program");
-        log.prompt(":");
-        switch(sc.getInt(3)){
-            case 1:
-                //Add Person to List
-                addPerson();
-                //chooseOptions();
-                break;
-            case 2:
-                //List the current list of people, old + new
-                printOption();
-                //chooseOptions();
-                break;
-            case 3:
-                //Append List to file then close program
-                pd.saveToFile(filePath + ".csv");
-                pd.saveToFileJson(filePath + ".json");
-                break;
-            default:
-                //chooseOptions();
-                break;
-        }
+        int choice = prompts.get(State.MAIN_MENU).askQuetions(new int[]{1,2, 3});
+//        switch(choice){
+//            case 1:
+//                //Add Person to List
+//                //addPerson();
+//                //chooseOptions();
+//                break;
+//            case 2:
+//                //List the current list of people, old + new
+//                //printOption();
+//                //chooseOptions();
+//                break;
+//            case 3:
+//                //Append List to file then close program
+//                //pd.saveToFile(filePath + ".csv");
+//                //.saveToFileJson(filePath + ".json");
+//                break;
+//            default:
+//                //chooseOptions();
+//                break;
+//        }
     }
     public static void printOption(){
         log.log(" [1] CSV");
