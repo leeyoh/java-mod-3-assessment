@@ -124,11 +124,11 @@ public class Hospital {
 //        System.out.println("Map < Symptoms , Specialties > ");
 //        System.out.println(ConsoleColors.CYAN_BACKGROUND + symToSpecial + ConsoleColors.RESET);
     }
-    public int numDoctors(){
+    public int getNumDoctors(){
         return this.numDoctors;
     }
 
-    public int numPatients(){
+    public int getNumPatients(){
         return this.numPatients;
     }
 

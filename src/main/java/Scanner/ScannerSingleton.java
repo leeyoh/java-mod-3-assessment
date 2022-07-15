@@ -1,10 +1,8 @@
 package Scanner;
-
 import Console.LoggerSingleton;
 
 import java.util.Locale;
 import java.util.Scanner;
-
 public class ScannerSingleton {
     private static ScannerSingleton scan = null;
     private Scanner scanner;
@@ -21,7 +19,6 @@ public class ScannerSingleton {
     public void close(){
         scanner.close();
     }
-
     /**
      * @return
      */
@@ -29,7 +26,6 @@ public class ScannerSingleton {
         String text = scanner.nextLine();
         return text;
     }
-
     /**
      * Will ask user until a valid input is given
      * @param min

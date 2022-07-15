@@ -1,7 +1,9 @@
 import Console.LoggerSingleton;
 import FileManager.FileManagerSingleton;
+import Hosptial.Doctor;
 import Hosptial.Hospital;
 import Hosptial.PersonDirectory;
+import Hosptial.Specialty;
 import Scanner.Prompt;
 import Scanner.ScannerSingleton;
 
@@ -10,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class Terminal {
     private static PersonDirectory pd;
@@ -21,6 +24,11 @@ public class Terminal {
     private static String filePath = path + fileName;
     private static Map<State, Prompt> prompts;
     private static List<Hospital> hospitals;
+    private static final int TEXT_BASE = 1000;
+    private static final int PROMPT_BASE = 2000;
+    private final int INT_BASE = 0;
+
+    private static Hospital currentHosptial;
     public static void main(String[] args) {
         initializeObjects();
         createFolder();
@@ -34,6 +42,7 @@ public class Terminal {
     /**
      * Values greater than 1000, the user is prompted for String
      * Values less than 1000, the user is prompted for INT
+     * Value greater than 2000, is just a statement
      */
     public static void createQuestions(){
         prompts.put(State.MAIN_MENU,new Prompt(
@@ -41,12 +50,29 @@ public class Terminal {
                     put(1, "Treat Patients");
                     put(2, "New Hospital");
                     put(3, "New Patients");
+                    put(4, "Exit");
                 }}
         ));
         prompts.put(State.NEW_HOSPITAL,new Prompt(
                 new HashMap<>() {{
-                    put(1001, "Hospital Name?");
-                    put(2, "# of Doctors?");
+                    put(TEXT_BASE + 1, "Hospital Name?");
+                    put(1, "# of Doctors?");
+                }}
+        ));
+        prompts.put(State.NEW_DOCTOR,new Prompt(
+                new HashMap<>() {{
+                    put(TEXT_BASE + 1, "Doctor First Name?");
+                    put(TEXT_BASE + 2, "Doctor Last Name?");
+                    put(PROMPT_BASE + 1, "Doctor Speciality");
+                }}
+        ));
+        prompts.put(State.LIST_SPECIALTIES,new Prompt(
+                new HashMap<>() {{
+                    int i = 1;
+                    for(Specialty speciality :Specialty.values()){
+                        put(i,speciality.name());
+                        i+=1;
+                    }
                 }}
         ));
     }
@@ -74,21 +100,22 @@ public class Terminal {
         fm = FileManagerSingleton.getInstance();
     }
     private static void startHospital(){
-        List<String> answers = prompts.get(State.NEW_HOSPITAL).askSequence(new int[]{1001,2});
-        System.out.println(answers.get(0));
-        System.out.println(answers.get(1));
-        hospitals.add(
-                new Hospital(answers.get(0),
-                        Integer.parseInt(answers.get(1))
-                )
-        );
+        List<String> answers = prompts.get(State.NEW_HOSPITAL).askSequence(new int[]{TEXT_BASE + 1,1});
+        currentHosptial = new Hospital(answers.get(0), Integer.parseInt(answers.get(1)));
+        hospitals.add(currentHosptial);
     }
+    private static void addDoctor(){
+        List<String> answers = prompts.get(State.NEW_DOCTOR).askSequence(new int[]{TEXT_BASE + 1,TEXT_BASE + 2,PROMPT_BASE + 1});
+        Specialty specialty = Specialty.values()[prompts.get(State.LIST_SPECIALTIES).chooseMulti(IntStream.rangeClosed(1,Specialty.values().length).toArray())-1];
+        currentHosptial.addDoctor(new Doctor(answers.get(0),answers.get(1),specialty));
+    }
+
     /**
      * Main Menu for Terminal
      * TODO change array of ints to ENUMS
      */
     public static void mainMenu(){
-        int choice = prompts.get(State.MAIN_MENU).chooseMulti(new int[]{1,2, 3});
+        int choice = prompts.get(State.MAIN_MENU).chooseMulti(new int[]{1,2, 3,4});
         switch(choice){
             case 1: // Treatment
                 //Add Person to List
@@ -97,12 +124,19 @@ public class Terminal {
                 break;
             case 2: // New Hospital
                 startHospital();
+                for(int i = 0; i < currentHosptial.getNumDoctors(); i ++){
+                    addDoctor();
+                }
                 break;
             case 3: // New Patient
                 //Append List to file then close program
                 //pd.saveToFile(filePath + ".csv");
                 //.saveToFileJson(filePath + ".json");
                 break;
+            case 4:
+                exitTerminal("-----------");
+                return;
+
             default:
                 break;
         }

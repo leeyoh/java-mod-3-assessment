@@ -38,8 +38,10 @@ public class Prompt {
         for(int i : questionIndex){
             log.prompt(questions.get(i));
             log.prompt(":");
-            if(i > 1000){
+            if(i > 1000 && i < 2000){
                 answers.add(sc.getString());
+            } else if(i > 2000) {
+                answers.add("");
             } else {
                 answers.add(String.valueOf(sc.getInt(0,999)));
             }
