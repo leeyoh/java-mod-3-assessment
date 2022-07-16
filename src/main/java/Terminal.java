@@ -178,7 +178,6 @@ public class Terminal {
     }
     private static void updateHosptials(){
         List<Patient> tempList = new ArrayList<Patient>();
-
         for (Hospital hospital : hospitals) {
             for (Patient pat : hospital.getPatients()) {
                 if(pat.getHealthBar() >= 100){
@@ -269,24 +268,20 @@ public class Terminal {
             System.out.println(e);
         }
     }
-
     public static void loadHospitals() {
         try {
             for (String p : fm.listFilesUsingJavaIO(path + "hospitals/")) {
-                System.out.println(p);
                 hospitals.add(fm.jsonFileToObject(p, Hospital.class));
             }
         } catch (Exception e) {
             System.out.println(e);
         }
     }
-
     public static void saveHosptials() {
         for (Hospital h : hospitals) {
             fm.saveAsJSON(path + "hospitals/" + h.getName() + ".json", h);
         }
     }
-
     public static void saveWaitList() {
         fm.saveAsJSON(path + "WaitList.json", waitListedPatients);
     }

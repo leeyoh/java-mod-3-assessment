@@ -36,11 +36,9 @@ public class Patient extends Person{
             }
             if(this.healthBar >= 100){
                 this.healthBar = 100;
-                //this.aliment = null;
             }
             if(this.healthBar <= 0){
                 this.healthBar = 0;
-                //this.aliment = null;
             }
     }
     public void displayHealthBar(){

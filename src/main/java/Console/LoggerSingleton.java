@@ -6,7 +6,6 @@ public class LoggerSingleton {
         private LoggerSingleton() {
             c = new ConsoleColors();
         }
-
         public static LoggerSingleton getInstance() {
             if (logger == null) {
                 logger = new LoggerSingleton();
@@ -28,7 +27,6 @@ public class LoggerSingleton {
         public void message(String message) {
             System.out.println(c.RED + message + c.RESET);
         }
-
         public void clearScreen(){
             final int MAX_LINES = 50;
             for(int i = 0; i < MAX_LINES; i++){

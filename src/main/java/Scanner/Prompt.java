@@ -49,7 +49,7 @@ public class Prompt {
                 answers.add(String.valueOf(sc.getInt(0,999)));
             }
         }
-        System.out.println(answers);
+        System.out.println("");
         return answers;
     }
 }

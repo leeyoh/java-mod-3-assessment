@@ -1,19 +1,15 @@
 package FileManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
 public class FileManagerSingleton {
     private static FileManagerSingleton fileManager = null;
-    private FileManagerSingleton(){
-
-    }
+    private FileManagerSingleton(){}
     /**
      * Attempts to create a Folder in the root directory of the project.
      * @param folderName
@@ -56,12 +52,10 @@ public class FileManagerSingleton {
         Files.list(new File(dir).toPath())
                 .limit(10)
                 .forEach(path -> {
-                    System.out.println(path);
                     fileNames.add(String.valueOf(path));
                 });
         return fileNames;
     }
-
     public void createFile(String fileName){
         FileWriter myObj;
         try {
@@ -73,7 +67,6 @@ public class FileManagerSingleton {
         }
     }
     public void appendToFile(String fileName, StringBuffer values) {
-        System.out.println(fileName);
         try(FileWriter myObj = new FileWriter(fileName,true)){
             myObj.append(values);
         } catch (IOException e) {
@@ -103,7 +96,6 @@ public class FileManagerSingleton {
         List<T> ts = mapper.readValue(targetStream, listType);
         return ts;
     }
-
     /**
      * Save Object as JSON
      * @param fileName
