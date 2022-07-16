@@ -185,6 +185,10 @@ public class Terminal {
                     activePatients.remove(pat);
                     tempList.add(pat);
                 }
+                if(pat.getHealthBar() <= 0){
+                    activePatients.remove(pat);
+                    tempList.add(pat);
+                }
             }
         }
         for (Hospital hospital : hospitals) {

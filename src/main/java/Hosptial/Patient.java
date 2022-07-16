@@ -1,4 +1,7 @@
 package Hosptial;
+
+import java.util.Random;
+
 public class Patient extends Person{
     private Aliment aliment;
     private int healthBar;
@@ -19,17 +22,34 @@ public class Patient extends Person{
      * If the patient is fully healed remove the aliment
      */
     public void treatPatient(){
-        if(this.aliment.getCurable()){
-            this.healthBar += 10;
+            switch(new Random().nextInt(10)){
+                case 0:
+                    this.healthBar -= 10;
+                    break;
+                case 1:
+                    break;
+                default:
+                    if(this.aliment.getCurable()) {
+                        this.healthBar += 10;
+                    }
+                    break;
+            }
             if(this.healthBar >= 100){
                 this.healthBar = 100;
-                this.aliment = null;
+                //this.aliment = null;
             }
-        }
+            if(this.healthBar <= 0){
+                this.healthBar = 0;
+                //this.aliment = null;
+            }
     }
     public void displayHealthBar(){
         String anim= "=";
-        System.out.print(this.toString() + "HP: " + this.getHealthBar() + " ");
+        if(this.aliment.getCurable()){
+            System.out.print(this.toString() +" " + this.aliment+ " HP: " + this.getHealthBar() + " ");
+        }else{
+            System.out.print(this.toString() +" " + this.aliment+ " HP: " + this.getHealthBar() + " NOT CURABLE" + " ");
+        }
         for (int x = 0; x < this.getHealthBar(); x += 10) {
             System.out.print(anim);
         }
