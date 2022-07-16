@@ -32,6 +32,6 @@ public class Patient extends Person{
     }
     @Override
     public String toString(){
-        return this.getFirstName() + this.getLastName();
+        return this.hashCode() + ": " + this.getFirstName() + " " + this.getLastName();
     }
 }

@@ -4,5 +4,7 @@ public enum State {
     NEW_DOCTOR,
     LIST_SPECIALTIES,
     NEW_PATIENT,
-    LIST_ALIMENTS;
+    LIST_ALIMENTS,
+    TREAT_PATIENTS,
+    LIST_PATIENTS,
 }

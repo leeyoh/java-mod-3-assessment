@@ -1,8 +1,6 @@
 package Console;
 
 public class LoggerSingleton {
-
-        private int currentLine = 0;
         private static LoggerSingleton logger = null;
         private ConsoleColors c;
         private LoggerSingleton() {
@@ -25,7 +23,16 @@ public class LoggerSingleton {
             System.out.println(c.BLUE + " [ " + String.valueOf(index) + " ] " + message + c.RESET);
         }
         public void log(String message) {
-            currentLine++;
             System.out.println(c.BLUE + "::" + c.RESET  + message);
+        }
+        public void message(String message) {
+            System.out.println(c.RED + message + c.RESET);
+        }
+
+        public void clearScreen(){
+            final int MAX_LINES = 50;
+            for(int i = 0; i < MAX_LINES; i++){
+                System.out.println("");
+            }
         }
 }

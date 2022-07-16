@@ -23,7 +23,11 @@ public class Prompt {
      */
     public int chooseMulti(int[] questionIndex){
         for(int i : questionIndex){
-            log.select(i,questions.get(i));
+            if(i > 2000){
+                log.message((questions.get(i)));
+            }else{
+                log.select(i,questions.get(i));
+            }
         }
         log.prompt(":");
         int userChoice = sc.getInt(0,999);
@@ -32,7 +36,6 @@ public class Prompt {
         }
         return chooseMulti(questionIndex);
     }
-
     public List<String> askSequence(int[] questionIndex){
         List<String> answers = new ArrayList<String>();
         for(int i : questionIndex){
