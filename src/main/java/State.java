@@ -3,4 +3,6 @@ public enum State {
     NEW_HOSPITAL,
     NEW_DOCTOR,
     LIST_SPECIALTIES,
+    NEW_PATIENT,
+    LIST_ALIMENTS;
 }

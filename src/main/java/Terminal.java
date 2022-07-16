@@ -1,9 +1,6 @@
 import Console.LoggerSingleton;
 import FileManager.FileManagerSingleton;
-import Hosptial.Doctor;
-import Hosptial.Hospital;
-import Hosptial.PersonDirectory;
-import Hosptial.Specialty;
+import Hosptial.*;
 import Scanner.Prompt;
 import Scanner.ScannerSingleton;
 
@@ -20,25 +17,35 @@ public class Terminal {
     private static LoggerSingleton log;
     private static FileManagerSingleton fm;
     private static String fileName = "list";
-    private static final String path = "data/";
+    private static final String path = "./data/";
     private static String filePath = path + fileName;
     private static Map<State, Prompt> prompts;
     private static List<Hospital> hospitals;
     private static final int TEXT_BASE = 1000;
     private static final int PROMPT_BASE = 2000;
     private final int INT_BASE = 0;
-
     private static Hospital currentHosptial;
+    private static List<Patient> activePatients;
+    private static List<Patient> waitListedPatients;
+
     public static void main(String[] args) {
         initializeObjects();
         createFolder();
         createQuestions();
+        listFiles(path);
+        loadWaitList();
         mainMenu();
 
         //loadFile();
         //chooseOptions();
     }
-
+    public static void listFiles(String path) {
+        try{
+            fm.listFilesUsingJavaIO(path);
+        }catch(Exception e){
+            log.error(String.valueOf(e));
+        }
+    }
     /**
      * Values greater than 1000, the user is prompted for String
      * Values less than 1000, the user is prompted for INT
@@ -75,8 +82,23 @@ public class Terminal {
                     }
                 }}
         ));
+        prompts.put(State.LIST_ALIMENTS,new Prompt(
+                new HashMap<>() {{
+                    int i = 1;
+                    for(Aliment aliment :Aliment.values()){
+                        put(i,aliment.name());
+                        i+=1;
+                    }
+                }}
+        ));
+        prompts.put(State.NEW_PATIENT,new Prompt(
+                new HashMap<>() {{
+                    put(TEXT_BASE + 1, "Patient First Name?");
+                    put(TEXT_BASE + 2, "Patient Last Name?");
+                    put(PROMPT_BASE + 1, "Patient Aliment");
+                }}
+        ));
     }
-
     public static void createFolder(){
         try{
             fm.createFolder("data");
@@ -98,6 +120,8 @@ public class Terminal {
         sc = ScannerSingleton.getInstance();
         log = LoggerSingleton.getInstance();
         fm = FileManagerSingleton.getInstance();
+        waitListedPatients = new ArrayList<Patient>();
+        activePatients = new ArrayList<Patient>();
     }
     private static void startHospital(){
         List<String> answers = prompts.get(State.NEW_HOSPITAL).askSequence(new int[]{TEXT_BASE + 1,1});
@@ -109,13 +133,42 @@ public class Terminal {
         Specialty specialty = Specialty.values()[prompts.get(State.LIST_SPECIALTIES).chooseMulti(IntStream.rangeClosed(1,Specialty.values().length).toArray())-1];
         currentHosptial.addDoctor(new Doctor(answers.get(0),answers.get(1),specialty));
     }
-
+    private static void addPatient(){
+        List<String> answers = prompts.get(State.NEW_PATIENT).askSequence(new int[]{TEXT_BASE + 1,TEXT_BASE + 2,PROMPT_BASE + 1});
+        Aliment aliment = Aliment.values()[prompts.get(State.LIST_ALIMENTS).chooseMulti(IntStream.rangeClosed(1,Aliment.values().length).toArray())-1];
+        waitListedPatients.add(new Patient(answers.get(0), answers.get(1), aliment ));
+    }
+    private static void updateWaitList(){
+        for(Patient p : waitListedPatients){
+            for(Hospital hospital: hospitals){
+                for(Doctor doc : hospital.getDoctors()){
+                    if(doc.getSpecialty().equals(p.getAliment().getSpecialty())){
+                        hospital.addPatient(p);
+                        activePatients.add(p);
+                    }
+                }
+            }
+        }
+        for(Patient p : activePatients){
+            waitListedPatients.remove(p);
+        }
+    }
+    private static void printWaistList(){
+        log.log("Wait List: " + String.valueOf(waitListedPatients));
+    }
+    private static void printActiveList(){
+        log.log("Active List: " + String.valueOf(activePatients));
+    }
     /**
      * Main Menu for Terminal
      * TODO change array of ints to ENUMS
      */
     public static void mainMenu(){
-        int choice = prompts.get(State.MAIN_MENU).chooseMulti(new int[]{1,2, 3,4});
+        int[] options = new int[]{2,3,4};
+        if(activePatients.size() > 0){
+            options = new int[]{1,2, 3,4};
+        }
+        int choice = prompts.get(State.MAIN_MENU).chooseMulti(options);
         switch(choice){
             case 1: // Treatment
                 //Add Person to List
@@ -127,8 +180,18 @@ public class Terminal {
                 for(int i = 0; i < currentHosptial.getNumDoctors(); i ++){
                     addDoctor();
                 }
+                currentHosptial.printHospital();
+                updateWaitList();
+                printActiveList();
+                printWaistList();
+                saveWaitList();
                 break;
             case 3: // New Patient
+                addPatient();
+                updateWaitList();
+                printActiveList();
+                printWaistList();
+                saveWaitList();
                 //Append List to file then close program
                 //pd.saveToFile(filePath + ".csv");
                 //.saveToFileJson(filePath + ".json");
@@ -136,11 +199,22 @@ public class Terminal {
             case 4:
                 exitTerminal("-----------");
                 return;
-
             default:
                 break;
         }
         mainMenu();
+    }
+    public static void loadWaitList() {
+        try{
+            waitListedPatients = (List<Patient>) fm.jsonFileToObject(path + "WaitList.json",waitListedPatients.getClass());
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        printWaistList();
+    }
+
+    public static void saveWaitList(){
+        fm.saveAsJSON(path + "WaitList.json",waitListedPatients);
     }
     public static void printOption(){
         log.log(" [1] CSV");

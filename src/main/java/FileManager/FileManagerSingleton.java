@@ -1,13 +1,15 @@
 package FileManager;
+import Hosptial.Hospital;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import javafx.application.HostServices;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class FileManagerSingleton {
     private static FileManagerSingleton fileManager = null;
@@ -80,11 +82,22 @@ public class FileManagerSingleton {
             System.out.println("An error occurred.");
         }
     }
-
-    static void saveAsJSON (String fileName, List<String> persons){
+    public static <T> T jsonFileToObject(String filePath, Class c) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        System.out.println(c.getClass());
+        File targetFile = new File(filePath);
+        InputStream targetStream = new FileInputStream(targetFile);
+        return (T) mapper.readValue(targetStream, c);
+    }
+    /**
+     * Save Object as JSON
+     * @param fileName
+     * @param obj
+     */
+    public static void saveAsJSON(String fileName, Object obj){
         ObjectMapper mapper = new ObjectMapper();
         try{
-            mapper.writeValue(new File(fileName),persons);
+            mapper.writeValue(new File(fileName),obj);
         }catch(Exception e){
             System.out.println(e);
         }

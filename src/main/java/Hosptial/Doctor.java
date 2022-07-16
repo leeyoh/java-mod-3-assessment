@@ -4,8 +4,9 @@ import java.util.List;
 
 public class Doctor extends Person{
 
+
     private Specialty specialty;
-    private final int MAX_PATIENT = 100;
+    public static final int MAX_PATIENT = 100;
     private int currentNumPatients = 0;
     private List<Patient> patients;
 
