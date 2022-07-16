@@ -32,6 +32,9 @@ public class Hospital {
         return "Hospital: " + this.name;
     }
 
+    public String getName(){
+        return this.name;
+    }
     public List<Doctor> getDoctors(){
         return doctors;
     }

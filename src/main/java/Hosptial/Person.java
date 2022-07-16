@@ -7,6 +7,11 @@ public class Person {
         this.firstName = firstName;
         this.lastName = lastName;
     }
+    /**
+     * Default Constructor because Jackson is stupid
+     * https://stackoverflow.com/questions/52708773/cannot-deserialize-from-object-value-no-delegate-or-property-based-creator-ev
+     */
+    public Person() {}
     public String toString() {
         StringBuffer personString = new StringBuffer();
         personString.append("firstName = " + firstName);

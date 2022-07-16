@@ -3,6 +3,9 @@ package Hosptial;
 public class Patient extends Person{
     private Aliment aliment;
     private int healthBar;
+    public Patient(){
+        super();
+    }
     public Patient(String firstName, String lastName, Aliment aliment){
         super(firstName, lastName);
         this.aliment = aliment;

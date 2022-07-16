@@ -1,7 +1,6 @@
 package FileManager;
-import Hosptial.Hospital;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.application.HostServices;
+import com.fasterxml.jackson.databind.type.CollectionType;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -9,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class FileManagerSingleton {
     private static FileManagerSingleton fileManager = null;
@@ -82,13 +80,30 @@ public class FileManagerSingleton {
             System.out.println("An error occurred.");
         }
     }
-    public static <T> T jsonFileToObject(String filePath, Class c) throws Exception {
+    /**
+     * Maps Class to JSON and returns object
+     * @param filePath
+     * @param c
+     * @return
+     * @param <T>
+     * @throws Exception
+     */
+    public static <T> T jsonFileToObject(String filePath, Class<T> c) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        System.out.println(c.getClass());
         File targetFile = new File(filePath);
         InputStream targetStream = new FileInputStream(targetFile);
         return (T) mapper.readValue(targetStream, c);
     }
+    //https://stackoverflow.com/questions/28821715/java-lang-classcastexception-java-util-linkedhashmap-cannot-be-cast-to-com-test
+    public <T> List<T> jsonFileToObjectList(String filePath, Class<T> tClass) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        CollectionType listType = mapper.getTypeFactory().constructCollectionType(ArrayList.class, tClass);
+        File targetFile = new File(filePath);
+        InputStream targetStream = new FileInputStream(targetFile);
+        List<T> ts = mapper.readValue(targetStream, listType);
+        return ts;
+    }
+
     /**
      * Save Object as JSON
      * @param fileName

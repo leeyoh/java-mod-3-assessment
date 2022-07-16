@@ -34,6 +34,8 @@ public class Terminal {
         createQuestions();
         listFiles(path);
         loadWaitList();
+
+        updateWaitList();
         mainMenu();
 
         //loadFile();
@@ -185,6 +187,7 @@ public class Terminal {
                 printActiveList();
                 printWaistList();
                 saveWaitList();
+                saveHosptials();
                 break;
             case 3: // New Patient
                 addPatient();
@@ -192,6 +195,7 @@ public class Terminal {
                 printActiveList();
                 printWaistList();
                 saveWaitList();
+                saveHosptials();
                 //Append List to file then close program
                 //pd.saveToFile(filePath + ".csv");
                 //.saveToFileJson(filePath + ".json");
@@ -206,13 +210,17 @@ public class Terminal {
     }
     public static void loadWaitList() {
         try{
-            waitListedPatients = (List<Patient>) fm.jsonFileToObject(path + "WaitList.json",waitListedPatients.getClass());
+            waitListedPatients = fm.jsonFileToObjectList(path + "WaitList.json",Patient.class);
         }catch(Exception e){
             System.out.println(e);
         }
         printWaistList();
     }
-
+    public static void saveHosptials(){
+        for(Hospital h: hospitals){
+            fm.saveAsJSON(path + h.getName() + ".json", h);
+        }
+    }
     public static void saveWaitList(){
         fm.saveAsJSON(path + "WaitList.json",waitListedPatients);
     }
