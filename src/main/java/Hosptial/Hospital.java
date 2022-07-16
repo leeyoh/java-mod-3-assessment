@@ -10,18 +10,13 @@ public class Hospital {
     private Map<Doctor, List<Patient>> patientChart;
     private Map<Specialty, List<Doctor>> docChart;
     private Map<Aliment,Specialty> symToSpecial;
-    private List<Patient> waitList;
-
-    public Hospital(){
-
-    }
+    public Hospital(){}
     public Hospital( String name, int  numDoctors){
         this.numDoctors = numDoctors;
         this.numPatients = 0;
         this.name = name;
         this.doctors = new ArrayList<>();
         this.patients = new ArrayList<>();
-        this.waitList = new ArrayList<>();
         patientChart = new HashMap<>();
         docChart = new HashMap<>();
         symToSpecial = new HashMap<>();
@@ -34,7 +29,6 @@ public class Hospital {
     public String toString(){
         return "Hospital: " + this.name;
     }
-
     public String getName(){
         return this.name;
     }
@@ -43,12 +37,6 @@ public class Hospital {
     }
     public List<Patient> getPatients(){
         return patients;
-    }
-    public void printDocChart(){
-        System.out.println(this.docChart);
-    }
-    public void printPatientChart(){
-        System.out.println(this.patientChart);
     }
     public int addDoctor(Doctor doc){
         Specialty special = doc.getSpecialty();
@@ -65,7 +53,14 @@ public class Hospital {
         docChart.put(special, doclist);
         return 0;
     }
+    public void removePatient(Patient pat){
+        try{
+            this.patients.remove(pat);
+        }catch(Exception e){
 
+        }
+
+    }
     public void addPatient(Patient pat){
         this.patients.add(pat);
     }
@@ -77,43 +72,17 @@ public class Hospital {
         System.out.print(ConsoleColors.GREEN_BACKGROUND);
         System.out.println("" + ConsoleColors.RESET);
         System.out.println("Hospital: " +
-               ConsoleColors.CYAN_BACKGROUND + this.name + ConsoleColors.RESET + " Max Patient per Doc : " +
+               ConsoleColors.CYAN_BACKGROUND + this.name + ConsoleColors.RESET +
                 ConsoleColors.CYAN_BACKGROUND + Doctor.MAX_PATIENT + ConsoleColors.RESET + " # Docs : " +
                 ConsoleColors.CYAN_BACKGROUND +  this.numDoctors + ConsoleColors.RESET + " # Patients : " +
                 ConsoleColors.CYAN_BACKGROUND + this.numPatients + ConsoleColors.RESET);
-        //System.out.println("---------------------------");
-        //System.out.println("Waitlist: " + ConsoleColors.CYAN_BACKGROUND + this.waitList + ConsoleColors.RESET);
-        //System.out.println("Specialties: " + ConsoleColors.CYAN_BACKGROUND + Arrays.asList(Specialty.values())+ ConsoleColors.RESET);
-        //System.out.println("Symptoms: " + ConsoleColors.CYAN_BACKGROUND + Arrays.asList(Aliment.values()) + ConsoleColors.RESET);
         System.out.println("---------------------------");
         System.out.println("Map < Doctor , Patient > ");
         System.out.println(ConsoleColors.CYAN_BACKGROUND + patientChart + ConsoleColors.RESET);
         System.out.println("Map < Specialties , Doctors > ");
         System.out.println(ConsoleColors.CYAN_BACKGROUND + docChart + ConsoleColors.RESET);
-        //System.out.println("Map < Symptoms , Specialties > ");
-        //System.out.println(ConsoleColors.CYAN_BACKGROUND + symToSpecial + ConsoleColors.RESET);
     }
     public int getNumDoctors(){
         return this.numDoctors;
     }
-    public int getNumPatients(){
-        return this.numPatients;
-    }
-  //  private Specalties findSpecalties(Symptoms symptom){
-//        return symToSpecial.get(symptom);
-//    }
-
-//    private Doctor findDoctor(Specalties specalty){
-//        List<Doctor> doclist =  docChart.get(specalty);
-//        if(doclist == null){
-//            return null;
-//        }
-//        for(Doctor doc: doclist){
-//            if(doc.canTakeMorePatients()){
-//                doc.increamentPatient();
-//                return doc;
-//            }
-//        }
-//        return null;
-//    }
 }

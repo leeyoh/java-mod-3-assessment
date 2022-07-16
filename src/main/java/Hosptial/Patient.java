@@ -27,6 +27,17 @@ public class Patient extends Person{
             }
         }
     }
+    public void displayHealthBar(){
+        String anim= "=";
+        System.out.print(this.toString() + "HP: " + this.getHealthBar() + " ");
+        for (int x = 0; x < this.getHealthBar(); x += 10) {
+            System.out.print(anim);
+        }
+        System.out.println("");
+    }
+    public int getHealthBar(){
+        return this.healthBar;
+    }
     public Aliment getAliment(){
         return this.aliment;
     }

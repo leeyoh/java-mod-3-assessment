@@ -6,7 +6,6 @@ public class Doctor extends Person{
     private Specialty specialty;
     public static final int MAX_PATIENT = 100;
     private int currentNumPatients = 0;
-    private List<Patient> patients;
     /**
      * Default Constructor because Jackson is stupid
      * https://stackoverflow.com/questions/52708773/cannot-deserialize-from-object-value-no-delegate-or-property-based-creator-ev
@@ -18,17 +17,8 @@ public class Doctor extends Person{
         super(firstName,lastName);
         this.specialty = special;
     }
-
     public Specialty getSpecialty(){
         return this.specialty;
-    }
-
-    public void increamentPatient(){
-        this.currentNumPatients += 1;
-    }
-
-    public boolean canTakeMorePatients(){
-        return this.currentNumPatients < this.MAX_PATIENT;
     }
     @Override
     public String toString(){

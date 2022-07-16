@@ -35,13 +35,6 @@ public class Terminal {
         createQuestions();
         mainMenu();
     }
-    public static void listFiles(String path) {
-        try {
-            fm.listFilesUsingJavaIO(path);
-        } catch (Exception e) {
-            log.error(String.valueOf(e));
-        }
-    }
     /**
      * Values greater than 1000, the user is prompted for String
      * Values less than 1000, the user is prompted for INT
@@ -107,7 +100,6 @@ public class Terminal {
                 }}
         ));
     }
-
     public static void createFolder() {
         try {
             fm.createFolder("data");
@@ -142,6 +134,24 @@ public class Terminal {
             options[i] = i;
         }
         int choice = prompts.get(State.TREAT_PATIENTS).chooseMulti(options);
+        switch(choice){
+            case 1:
+                for(Patient patient: activePatients){
+                    patient.treatPatient();
+                    patient.displayHealthBar();
+                }
+                break;
+            case 2:
+                break;
+            default:
+                if(choice > 2 && choice <= activePatients.size() + 2){
+                    activePatients.get(choice - 3).treatPatient();
+                    activePatients.get(choice - 3).displayHealthBar();
+                }else{
+                    treatPatient();
+                }
+                break;
+        }
     }
     private static void startHospital() {
         List<String> answers = prompts.get(State.NEW_HOSPITAL).askSequence(new int[]{TEXT_BASE + 1, 1});
@@ -166,6 +176,23 @@ public class Terminal {
             activePatients.addAll(hospital.getPatients());
         }
     }
+    private static void updateHosptials(){
+        List<Patient> tempList = new ArrayList<Patient>();
+
+        for (Hospital hospital : hospitals) {
+            for (Patient pat : hospital.getPatients()) {
+                if(pat.getHealthBar() >= 100){
+                    activePatients.remove(pat);
+                    tempList.add(pat);
+                }
+            }
+        }
+        for (Hospital hospital : hospitals) {
+            for (Patient pat : tempList) {
+                hospital.removePatient(pat);
+            }
+        }
+    }
     private static void updateWaitList() {
         for (Patient p : waitListedPatients) {
             for (Hospital hospital : hospitals) {
@@ -188,11 +215,13 @@ public class Terminal {
         log.log("Active List: " + String.valueOf(activePatients));
     }
     public static void updateList() {
+        updateHosptials();
         updateWaitList();
         saveWaitList();
         saveHosptials();
         printActiveList();
         printWaistList();
+        createQuestions();
     }
     /**
      * Main Menu for Terminal
@@ -207,6 +236,7 @@ public class Terminal {
         switch (choice) {
             case 1: // Treatment
                 treatPatient();
+                updateList();
                 break;
             case 2: // New Hospital
                 startHospital();
