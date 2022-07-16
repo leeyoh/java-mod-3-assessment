@@ -32,14 +32,13 @@ public class Terminal {
         initializeObjects();
         createFolder();
         createQuestions();
-        listFiles(path);
         loadWaitList();
-
+        loadHospitals();
+        initActivePatients();
         updateWaitList();
+        printActiveList();
+        printWaistList();
         mainMenu();
-
-        //loadFile();
-        //chooseOptions();
     }
     public static void listFiles(String path) {
         try{
@@ -104,6 +103,7 @@ public class Terminal {
     public static void createFolder(){
         try{
             fm.createFolder("data");
+            fm.createFolder("data/hospitals");
         } catch (Exception e){
             System.out.println(e);
             exitTerminal("Failed to Create Folder");
@@ -140,6 +140,14 @@ public class Terminal {
         Aliment aliment = Aliment.values()[prompts.get(State.LIST_ALIMENTS).chooseMulti(IntStream.rangeClosed(1,Aliment.values().length).toArray())-1];
         waitListedPatients.add(new Patient(answers.get(0), answers.get(1), aliment ));
     }
+    /**
+     * TODO add error handling for misconfigured JSON
+     */
+    private static void initActivePatients(){
+        for(Hospital hospital: hospitals) {
+            activePatients.addAll(hospital.getPatients());
+        }
+    }
     private static void updateWaitList(){
         for(Patient p : waitListedPatients){
             for(Hospital hospital: hospitals){
@@ -160,6 +168,13 @@ public class Terminal {
     }
     private static void printActiveList(){
         log.log("Active List: " + String.valueOf(activePatients));
+    }
+    public static void updateList(){
+        updateWaitList();
+        saveWaitList();
+        saveHosptials();
+        printActiveList();
+        printWaistList();
     }
     /**
      * Main Menu for Terminal
@@ -183,22 +198,11 @@ public class Terminal {
                     addDoctor();
                 }
                 currentHosptial.printHospital();
-                updateWaitList();
-                printActiveList();
-                printWaistList();
-                saveWaitList();
-                saveHosptials();
+                updateList();
                 break;
             case 3: // New Patient
                 addPatient();
-                updateWaitList();
-                printActiveList();
-                printWaistList();
-                saveWaitList();
-                saveHosptials();
-                //Append List to file then close program
-                //pd.saveToFile(filePath + ".csv");
-                //.saveToFileJson(filePath + ".json");
+                updateList();
                 break;
             case 4:
                 exitTerminal("-----------");
@@ -214,11 +218,20 @@ public class Terminal {
         }catch(Exception e){
             System.out.println(e);
         }
-        printWaistList();
+    }
+    public static void loadHospitals(){
+        try{
+            for(String p: fm.listFilesUsingJavaIO(path + "hospitals/")){
+                System.out.println(p);
+                hospitals.add(fm.jsonFileToObject(p,Hospital.class));
+            }
+        }catch(Exception e){
+            System.out.println(e);
+        }
     }
     public static void saveHosptials(){
         for(Hospital h: hospitals){
-            fm.saveAsJSON(path + h.getName() + ".json", h);
+            fm.saveAsJSON(path + "hospitals/" + h.getName() + ".json", h);
         }
     }
     public static void saveWaitList(){

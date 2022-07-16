@@ -12,6 +12,9 @@ public class Hospital {
     private Map<Aliment,Specialty> symToSpecial;
     private List<Patient> waitList;
 
+    public Hospital(){
+
+    }
     public Hospital( String name, int  numDoctors){
         this.numDoctors = numDoctors;
         this.numPatients = 0;
@@ -38,6 +41,9 @@ public class Hospital {
     public List<Doctor> getDoctors(){
         return doctors;
     }
+    public List<Patient> getPatients(){
+        return patients;
+    }
     public void printDocChart(){
         System.out.println(this.docChart);
     }
@@ -60,29 +66,8 @@ public class Hospital {
         return 0;
     }
 
-    public int addPatient(Patient pat){
-        if(patients.size() >= numPatients){
-            return 1;
-        }
+    public void addPatient(Patient pat){
         this.patients.add(pat);
-
-//        Doctor doc = findDoctor(findSpecalties(pat.getSymptoms()));
-//        if(doc == null){
-//           //System.out.println(ConsoleColors.BLUE_BACKGROUND + "No Doctor found, added to waitlist" + ConsoleColors.RESET);
-//            waitList.add(pat);
-//            return 0;
-//        }
-//
-//        //System.out.println(ConsoleColors.BLUE_BACKGROUND + "Assigned to "+ doc + ConsoleColors.RESET);
-//        if(patientChart.containsKey(doc)){
-//            patientChart.get(doc).add(pat);
-//            return 0;
-//        }
-//
-//        List<Patient> patList =  new ArrayList<Patient>();
-//        patList.add(pat);
- //       patientChart.put(doc,patList);
-        return 0;
     }
 
     /**

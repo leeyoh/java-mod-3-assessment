@@ -1,8 +1,11 @@
 package Hosptial;
-
 public class Patient extends Person{
     private Aliment aliment;
     private int healthBar;
+    /**
+     * Default Constructor because Jackson is stupid
+     * https://stackoverflow.com/questions/52708773/cannot-deserialize-from-object-value-no-delegate-or-property-based-creator-ev
+     */
     public Patient(){
         super();
     }
